@@ -60,18 +60,31 @@ class PlayState extends FlxState {
 		super.create();
 	}
 
+	private function tiledProperties(propChildren:Xml):Map<String, Dynamic> {
+		var properties: Map<String, Dynamic> = new Map();
+		if(propChildren != null){
+			for(element in propChildren.elements()){
+				if(element != null && element.exists("name") && element.exists("value")){
+					properties[element.get("name")] = element.get("value");
+				}
+			}
+		}
+		return properties;
+	}
+
 	private function placeEntities(entityName:String, entityData:Xml):Void {
 	   var x:Int = Std.parseInt(entityData.get("x"));
 	   var y:Int = Std.parseInt(entityData.get("y"));
 		 var name:String = entityData.get("name");
 		 var type:String = entityData.get("type");
+		 var properties:Map<String, Dynamic> = tiledProperties(entityData.firstElement());
 	   if (name == "player") {
        _player.x = x;
        _player.y = y;
 	   } else if (type == "coin") {
 			 _grpCoins.add(new Coin(x, y));
 		 } else if (type == "enemy") {
-			 _grpEnemies.add(new Enemy(x, y, name));
+			 _grpEnemies.add(new Enemy(x, y, properties["color"]));
 		 }
 	}
 

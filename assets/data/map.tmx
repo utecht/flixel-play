@@ -22,9 +22,15 @@
   <object id="12" type="coin" gid="4" x="372" y="286" width="8" height="8"/>
   <object id="13" type="coin" gid="4" x="272" y="318" width="8" height="8"/>
   <object id="15" name="red" type="enemy" x="423.707" y="150.224">
+   <properties>
+    <property name="color" value="red"/>
+   </properties>
    <ellipse/>
   </object>
   <object id="18" name="green" type="enemy" x="331.719" y="270.493">
+   <properties>
+    <property name="color" value="green"/>
+   </properties>
    <ellipse/>
   </object>
  </objectgroup>
