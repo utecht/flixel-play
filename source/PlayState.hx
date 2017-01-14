@@ -20,6 +20,7 @@ class PlayState extends FlxState {
 	private var _map:TiledMap;
 	private var _mWalls:FlxTilemap;
 	private var _grpCoins:FlxTypedGroup<Coin>;
+	private var _grpEnemies:FlxTypedGroup<Enemy>;
 
 	override public function create():Void {
 		_map = new TiledMap(AssetPaths.map__tmx);
@@ -43,6 +44,9 @@ class PlayState extends FlxState {
 		_grpCoins = new FlxTypedGroup<Coin>();
 		add(_grpCoins);
 
+		_grpEnemies = new FlxTypedGroup<Enemy>();
+		add(_grpEnemies);
+
 		_player = new Player();
 
 		var tmpMap:TiledObjectLayer = cast _map.getLayer("entities");
@@ -64,16 +68,28 @@ class PlayState extends FlxState {
 	   if (name == "player") {
        _player.x = x;
        _player.y = y;
-	   }
-		 if (type == "coin") {
+	   } else if (type == "coin") {
 			 _grpCoins.add(new Coin(x, y));
+		 } else if (type == "enemy") {
+			 _grpEnemies.add(new Enemy(x, y, name));
 		 }
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
     FlxG.collide(_player, _mWalls);
+		FlxG.collide(_grpEnemies, _mWalls);
+		_grpEnemies.forEachAlive(checkEnemyVision);
 		FlxG.overlap(_player, _grpCoins, playerTouchCoin);
+	}
+
+	private function checkEnemyVision(e:Enemy):Void {
+		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())){
+			e.seesPlayer = true;
+			e.playerPos.copyFrom(_player.getMidpoint());
+		} else {
+			e.seesPlayer = false;
+		}
 	}
 
 	private function playerTouchCoin(p:Player, c:Coin){
