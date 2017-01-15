@@ -8,7 +8,10 @@ import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 
+using flixel.util.FlxSpriteUtil;
+
 class Enemy extends FlxSprite {
+  public var _color:String;
   public var speed:Float = 50;
   private var _brain:FSM;
   private var _idleTmr:Float;
@@ -18,6 +21,7 @@ class Enemy extends FlxSprite {
 
   public function new(?x:Float = 0, ?y:Float = 0, color:String){
     super(x, y);
+    _color = color;
     //makeGraphic(16, 16, FlxColor.BLUE);
     loadGraphic("assets/images/enemy-" + color + ".png", true, 16, 16);
     setFacingFlip(FlxObject.LEFT, false, false);
@@ -30,6 +34,13 @@ class Enemy extends FlxSprite {
     _brain = new FSM(idle);
     _idleTmr = 0;
     playerPos = FlxPoint.get();
+  }
+
+  public function changeEnemy(color:String){
+    if(_color != color){
+      _color = color;
+      loadGraphic("assets/images/enemy-" + color + ".png", true, 16, 16);
+    }
   }
 
   public function idle():Void {
@@ -61,6 +72,9 @@ class Enemy extends FlxSprite {
 
   override public function update(elapsed:Float):Void {
     _brain.update();
+    if(isFlickering()){
+      return;
+    }
     super.update(elapsed);
   }
 
